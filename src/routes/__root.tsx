@@ -29,14 +29,14 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "MOTOHUB — Auto News, Prices, Stories, Merch & Events" },
+      { name: "description", content: "MOTOHUB is the all-in-one automotive platform: latest auto news, vehicle prices, garage stories, official merch and upcoming events." },
+      { name: "author", content: "MOTOHUB" },
+      { property: "og:title", content: "MOTOHUB — The Automotive Platform" },
+      { property: "og:description", content: "News, prices, stories, merch and events for car and bike enthusiasts." },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:site", content: "@motohub" },
     ],
     links: [
       {
