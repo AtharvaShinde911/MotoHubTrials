@@ -1,5 +1,8 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 
+import { CitySync } from "@/components/city-sync";
+import { fetchCurrentUser } from "@/lib/account";
+
 import appCss from "../styles.css?url";
 
 function NotFoundComponent() {
@@ -25,15 +28,24 @@ function NotFoundComponent() {
 }
 
 export const Route = createRootRoute({
+  // Who is signed in, available to every route as `context.user`.
+  beforeLoad: async () => ({ user: await fetchCurrentUser() }),
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "MOTOHUB — Auto News, Prices, Stories, Merch & Events" },
-      { name: "description", content: "MOTOHUB is the all-in-one automotive platform: latest auto news, vehicle prices, garage stories, official merch and upcoming events." },
+      {
+        name: "description",
+        content:
+          "MOTOHUB is the all-in-one automotive platform: latest auto news, vehicle prices, garage stories, official merch and upcoming events.",
+      },
       { name: "author", content: "MOTOHUB" },
       { property: "og:title", content: "MOTOHUB — The Automotive Platform" },
-      { property: "og:description", content: "News, prices, stories, merch and events for car and bike enthusiasts." },
+      {
+        property: "og:description",
+        content: "News, prices, stories, merch and events for car and bike enthusiasts.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@motohub" },
@@ -65,5 +77,10 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
-  return <Outlet />;
+  return (
+    <>
+      <CitySync />
+      <Outlet />
+    </>
+  );
 }

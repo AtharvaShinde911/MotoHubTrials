@@ -1,0 +1,7 @@
+# Copy to .dev.vars for local development (never commit .dev.vars).
+# In production set these with `npx wrangler secret put <NAME>` instead.
+GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your-client-secret
+# Optional: the public site URL, used to build the Google redirect URL.
+# Leave unset to use the address the request came in on.
+# APP_URL=https://motohub.example.com

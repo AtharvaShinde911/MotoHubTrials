@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouteContext } from "@tanstack/react-router";
 
 /* ---------- tiny inline icons (no deps) ---------- */
 export const Icon = {
@@ -113,6 +113,9 @@ const btnVariants = {
     "bg-accent font-bold text-accent-foreground hover:brightness-110 hover:shadow-[0_8px_24px_-8px_oklch(0.78_0.16_75/0.7)]",
 };
 
+export const inputCls =
+  "w-full rounded-xl border border-border bg-white/[0.04] px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/30";
+
 type BtnVariant = keyof typeof btnVariants;
 
 export const ArrowLink = ({
@@ -120,7 +123,7 @@ export const ArrowLink = ({
   variant = "primary",
   children,
 }: {
-  to: SectionPath;
+  to: SectionPath | "/stories/new";
   variant?: BtnVariant;
   children: React.ReactNode;
 }) => (
@@ -169,10 +172,65 @@ export function SiteHeader() {
           </Link>
         ))}
       </nav>
-      <button className="rounded-full border border-border px-4 py-1.5 text-sm hover:bg-white/5">
-        Sign in
-      </button>
+      <AccountButton />
     </header>
+  );
+}
+
+/** Round profile picture, falling back to initials. */
+export function Avatar({
+  name,
+  src,
+  className = "h-8 w-8 text-[11px]",
+}: {
+  name: string;
+  src?: string | null;
+  className?: string;
+}) {
+  const initials =
+    name
+      .split(/[\s_]+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((w) => w[0]!.toUpperCase())
+      .join("") || "?";
+  return src ? (
+    <img
+      src={src}
+      alt=""
+      referrerPolicy="no-referrer"
+      className={`${className} shrink-0 rounded-full object-cover`}
+    />
+  ) : (
+    <span
+      className={`${className} grid shrink-0 place-items-center rounded-full bg-gradient-to-br from-primary to-primary/40 font-black`}
+    >
+      {initials}
+    </span>
+  );
+}
+
+function AccountButton() {
+  const { user } = useRouteContext({ from: "__root__" });
+  if (!user) {
+    return (
+      <Link
+        to="/signin"
+        className="rounded-full border border-border px-4 py-1.5 text-sm hover:bg-white/5"
+      >
+        Sign in
+      </Link>
+    );
+  }
+  const label = user.handle ? `u/${user.handle}` : "Finish sign-up";
+  return (
+    <Link
+      to="/account"
+      className="flex items-center gap-2 rounded-full border border-border py-1 pl-1 pr-3 text-sm hover:bg-white/5"
+    >
+      <Avatar name={user.name ?? user.email} src={user.avatarUrl} className="h-7 w-7 text-[10px]" />
+      <span className="max-w-[9rem] truncate">{label}</span>
+    </Link>
   );
 }
 

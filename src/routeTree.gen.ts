@@ -9,18 +9,27 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as StoriesRouteImport } from './routes/stories'
+import { Route as SigninRouteImport } from './routes/signin'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as MerchRouteImport } from './routes/merch'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as CompareRouteImport } from './routes/compare'
+import { Route as AccountRouteImport } from './routes/account'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StoriesIndexRouteImport } from './routes/stories.index'
 import { Route as PricesIndexRouteImport } from './routes/prices.index'
+import { Route as StoriesNewRouteImport } from './routes/stories.new'
+import { Route as StoriesIdRouteImport } from './routes/stories.$id'
 import { Route as PricesSlugRouteImport } from './routes/prices.$slug'
+import { Route as ApiMediaSplatRouteImport } from './routes/api.media.$'
+import { Route as ApiAuthSignoutRouteImport } from './routes/api.auth.signout'
+import { Route as ApiAuthGoogleRouteImport } from './routes/api.auth.google'
+import { Route as ApiAuthDevRouteImport } from './routes/api.auth.dev'
+import { Route as ApiAuthCallbackGoogleRouteImport } from './routes/api.auth.callback.google'
 
-const StoriesRoute = StoriesRouteImport.update({
-  id: '/stories',
-  path: '/stories',
+const SigninRoute = SigninRouteImport.update({
+  id: '/signin',
+  path: '/signin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NewsRoute = NewsRouteImport.update({
@@ -43,9 +52,19 @@ const CompareRoute = CompareRouteImport.update({
   path: '/compare',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StoriesIndexRoute = StoriesIndexRouteImport.update({
+  id: '/stories/',
+  path: '/stories/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PricesIndexRoute = PricesIndexRouteImport.update({
@@ -53,94 +72,192 @@ const PricesIndexRoute = PricesIndexRouteImport.update({
   path: '/prices/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StoriesNewRoute = StoriesNewRouteImport.update({
+  id: '/stories/new',
+  path: '/stories/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StoriesIdRoute = StoriesIdRouteImport.update({
+  id: '/stories/$id',
+  path: '/stories/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PricesSlugRoute = PricesSlugRouteImport.update({
   id: '/prices/$slug',
   path: '/prices/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiMediaSplatRoute = ApiMediaSplatRouteImport.update({
+  id: '/api/media/$',
+  path: '/api/media/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthSignoutRoute = ApiAuthSignoutRouteImport.update({
+  id: '/api/auth/signout',
+  path: '/api/auth/signout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthGoogleRoute = ApiAuthGoogleRouteImport.update({
+  id: '/api/auth/google',
+  path: '/api/auth/google',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthDevRoute = ApiAuthDevRouteImport.update({
+  id: '/api/auth/dev',
+  path: '/api/auth/dev',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthCallbackGoogleRoute = ApiAuthCallbackGoogleRouteImport.update({
+  id: '/api/auth/callback/google',
+  path: '/api/auth/callback/google',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/compare': typeof CompareRoute
   '/events': typeof EventsRoute
   '/merch': typeof MerchRoute
   '/news': typeof NewsRoute
-  '/stories': typeof StoriesRoute
+  '/signin': typeof SigninRoute
   '/prices/$slug': typeof PricesSlugRoute
+  '/stories/$id': typeof StoriesIdRoute
+  '/stories/new': typeof StoriesNewRoute
   '/prices/': typeof PricesIndexRoute
+  '/stories/': typeof StoriesIndexRoute
+  '/api/auth/dev': typeof ApiAuthDevRoute
+  '/api/auth/google': typeof ApiAuthGoogleRoute
+  '/api/auth/signout': typeof ApiAuthSignoutRoute
+  '/api/media/$': typeof ApiMediaSplatRoute
+  '/api/auth/callback/google': typeof ApiAuthCallbackGoogleRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/compare': typeof CompareRoute
   '/events': typeof EventsRoute
   '/merch': typeof MerchRoute
   '/news': typeof NewsRoute
-  '/stories': typeof StoriesRoute
+  '/signin': typeof SigninRoute
   '/prices/$slug': typeof PricesSlugRoute
+  '/stories/$id': typeof StoriesIdRoute
+  '/stories/new': typeof StoriesNewRoute
   '/prices': typeof PricesIndexRoute
+  '/stories': typeof StoriesIndexRoute
+  '/api/auth/dev': typeof ApiAuthDevRoute
+  '/api/auth/google': typeof ApiAuthGoogleRoute
+  '/api/auth/signout': typeof ApiAuthSignoutRoute
+  '/api/media/$': typeof ApiMediaSplatRoute
+  '/api/auth/callback/google': typeof ApiAuthCallbackGoogleRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
   '/compare': typeof CompareRoute
   '/events': typeof EventsRoute
   '/merch': typeof MerchRoute
   '/news': typeof NewsRoute
-  '/stories': typeof StoriesRoute
+  '/signin': typeof SigninRoute
   '/prices/$slug': typeof PricesSlugRoute
+  '/stories/$id': typeof StoriesIdRoute
+  '/stories/new': typeof StoriesNewRoute
   '/prices/': typeof PricesIndexRoute
+  '/stories/': typeof StoriesIndexRoute
+  '/api/auth/dev': typeof ApiAuthDevRoute
+  '/api/auth/google': typeof ApiAuthGoogleRoute
+  '/api/auth/signout': typeof ApiAuthSignoutRoute
+  '/api/media/$': typeof ApiMediaSplatRoute
+  '/api/auth/callback/google': typeof ApiAuthCallbackGoogleRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/account'
     | '/compare'
     | '/events'
     | '/merch'
     | '/news'
-    | '/stories'
+    | '/signin'
     | '/prices/$slug'
+    | '/stories/$id'
+    | '/stories/new'
     | '/prices/'
+    | '/stories/'
+    | '/api/auth/dev'
+    | '/api/auth/google'
+    | '/api/auth/signout'
+    | '/api/media/$'
+    | '/api/auth/callback/google'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/account'
     | '/compare'
     | '/events'
     | '/merch'
     | '/news'
-    | '/stories'
+    | '/signin'
     | '/prices/$slug'
+    | '/stories/$id'
+    | '/stories/new'
     | '/prices'
+    | '/stories'
+    | '/api/auth/dev'
+    | '/api/auth/google'
+    | '/api/auth/signout'
+    | '/api/media/$'
+    | '/api/auth/callback/google'
   id:
     | '__root__'
     | '/'
+    | '/account'
     | '/compare'
     | '/events'
     | '/merch'
     | '/news'
-    | '/stories'
+    | '/signin'
     | '/prices/$slug'
+    | '/stories/$id'
+    | '/stories/new'
     | '/prices/'
+    | '/stories/'
+    | '/api/auth/dev'
+    | '/api/auth/google'
+    | '/api/auth/signout'
+    | '/api/media/$'
+    | '/api/auth/callback/google'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccountRoute: typeof AccountRoute
   CompareRoute: typeof CompareRoute
   EventsRoute: typeof EventsRoute
   MerchRoute: typeof MerchRoute
   NewsRoute: typeof NewsRoute
-  StoriesRoute: typeof StoriesRoute
+  SigninRoute: typeof SigninRoute
   PricesSlugRoute: typeof PricesSlugRoute
+  StoriesIdRoute: typeof StoriesIdRoute
+  StoriesNewRoute: typeof StoriesNewRoute
   PricesIndexRoute: typeof PricesIndexRoute
+  StoriesIndexRoute: typeof StoriesIndexRoute
+  ApiAuthDevRoute: typeof ApiAuthDevRoute
+  ApiAuthGoogleRoute: typeof ApiAuthGoogleRoute
+  ApiAuthSignoutRoute: typeof ApiAuthSignoutRoute
+  ApiMediaSplatRoute: typeof ApiMediaSplatRoute
+  ApiAuthCallbackGoogleRoute: typeof ApiAuthCallbackGoogleRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/stories': {
-      id: '/stories'
-      path: '/stories'
-      fullPath: '/stories'
-      preLoaderRoute: typeof StoriesRouteImport
+    '/signin': {
+      id: '/signin'
+      path: '/signin'
+      fullPath: '/signin'
+      preLoaderRoute: typeof SigninRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/news': {
@@ -171,11 +288,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CompareRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stories/': {
+      id: '/stories/'
+      path: '/stories'
+      fullPath: '/stories/'
+      preLoaderRoute: typeof StoriesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/prices/': {
@@ -185,6 +316,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PricesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/stories/new': {
+      id: '/stories/new'
+      path: '/stories/new'
+      fullPath: '/stories/new'
+      preLoaderRoute: typeof StoriesNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stories/$id': {
+      id: '/stories/$id'
+      path: '/stories/$id'
+      fullPath: '/stories/$id'
+      preLoaderRoute: typeof StoriesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/prices/$slug': {
       id: '/prices/$slug'
       path: '/prices/$slug'
@@ -192,18 +337,62 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PricesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/media/$': {
+      id: '/api/media/$'
+      path: '/api/media/$'
+      fullPath: '/api/media/$'
+      preLoaderRoute: typeof ApiMediaSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/signout': {
+      id: '/api/auth/signout'
+      path: '/api/auth/signout'
+      fullPath: '/api/auth/signout'
+      preLoaderRoute: typeof ApiAuthSignoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/google': {
+      id: '/api/auth/google'
+      path: '/api/auth/google'
+      fullPath: '/api/auth/google'
+      preLoaderRoute: typeof ApiAuthGoogleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/dev': {
+      id: '/api/auth/dev'
+      path: '/api/auth/dev'
+      fullPath: '/api/auth/dev'
+      preLoaderRoute: typeof ApiAuthDevRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/callback/google': {
+      id: '/api/auth/callback/google'
+      path: '/api/auth/callback/google'
+      fullPath: '/api/auth/callback/google'
+      preLoaderRoute: typeof ApiAuthCallbackGoogleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccountRoute: AccountRoute,
   CompareRoute: CompareRoute,
   EventsRoute: EventsRoute,
   MerchRoute: MerchRoute,
   NewsRoute: NewsRoute,
-  StoriesRoute: StoriesRoute,
+  SigninRoute: SigninRoute,
   PricesSlugRoute: PricesSlugRoute,
+  StoriesIdRoute: StoriesIdRoute,
+  StoriesNewRoute: StoriesNewRoute,
   PricesIndexRoute: PricesIndexRoute,
+  StoriesIndexRoute: StoriesIndexRoute,
+  ApiAuthDevRoute: ApiAuthDevRoute,
+  ApiAuthGoogleRoute: ApiAuthGoogleRoute,
+  ApiAuthSignoutRoute: ApiAuthSignoutRoute,
+  ApiMediaSplatRoute: ApiMediaSplatRoute,
+  ApiAuthCallbackGoogleRoute: ApiAuthCallbackGoogleRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

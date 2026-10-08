@@ -4,4 +4,16 @@
   "compatibility_date": "2025-09-24",
   "compatibility_flags": ["nodejs_compat"],
   "main": "@tanstack/react-start/server-entry",
+  // Accounts, sessions and Garage Stories. Create the database with
+  // `npx wrangler d1 create motohub` and paste its id below (see docs/ACCOUNTS.md).
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "motohub",
+      "database_id": "REPLACE_WITH_D1_DATABASE_ID",
+      "migrations_dir": "migrations",
+    },
+  ],
+  // Story photos. Create with `npx wrangler r2 bucket create motohub-media`.
+  "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "motohub-media" }],
 }
