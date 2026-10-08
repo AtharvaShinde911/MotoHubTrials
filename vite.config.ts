@@ -6,4 +6,6 @@
 // You can pass additional config via defineConfig({ vite: { ... } }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
-export default defineConfig();
+// `nitro: true` makes `npm run build` emit a deployable Worker (dist/server) with the D1 and
+// R2 bindings from wrangler.jsonc, outside Lovable too. Lovable already turns this on.
+export default defineConfig({ nitro: true });
