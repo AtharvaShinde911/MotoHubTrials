@@ -4,7 +4,13 @@
  * or database without touching the UI.
  */
 import { vehiclePhotos, type VehiclePhoto } from "@/data/vehicle-photos";
-import { vehicleSeed, type Fuel, type VehicleSeed, type VehicleType } from "@/data/vehicles";
+import {
+  vehicleSeed,
+  type Fuel,
+  type Variant,
+  type VehicleSeed,
+  type VehicleType,
+} from "@/data/vehicles";
 
 export type { Fuel, Specs, Variant, VehicleType } from "@/data/vehicles";
 export type { VehiclePhoto } from "@/data/vehicle-photos";
@@ -34,6 +40,10 @@ const vehicles: Vehicle[] = vehicleSeed.map((s) => {
 const bySlug = new Map(vehicles.map((x) => [x.slug, x]));
 
 export const listVehicles = (): Vehicle[] => vehicles;
+
+/** The base (cheapest) variant of a model. */
+export const cheapestVariant = (x: Vehicle): Variant =>
+  x.variants.reduce((a, b) => (b.price < a.price ? b : a));
 
 export const getVehicle = (slug: string): Vehicle | undefined => bySlug.get(slug);
 

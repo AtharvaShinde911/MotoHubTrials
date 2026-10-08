@@ -1,11 +1,23 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { X } from "lucide-react";
 
 import { VehicleArt } from "@/components/catalog";
+import { CityPicker } from "@/components/location";
 import { PageBody, PageHero, SiteShell, Tile } from "@/components/site";
-import { formatPriceRange, getVehicle, listVehicles, specRows, type Vehicle } from "@/lib/catalog";
+import {
+  cheapestVariant,
+  formatPrice,
+  formatPriceRange,
+  getVehicle,
+  listVehicles,
+  specRows,
+  type Variant,
+  type Vehicle,
+} from "@/lib/catalog";
 import { MAX_COMPARE, useCompare } from "@/lib/compare";
+import { useCity } from "@/lib/location";
+import { onRoadFor } from "@/lib/onroad";
 
 type CompareSearch = { ids?: string };
 
@@ -24,10 +36,13 @@ function ComparePage() {
   const navigate = useNavigate({ from: Route.fullPath });
   const compare = useCompare();
 
-  const urlSlugs = (ids ?? "")
-    .split(",")
+  const { city } = useCity();
+  const [variantNames, setVariantNames] = useState<Record<string, string>>({});
+
+  const urlSlugs = [...new Set((ids ?? "").split(","))]
     .filter((s) => getVehicle(s))
     .slice(0, MAX_COMPARE);
+  const idsKey = urlSlugs.join(",");
 
   // Opened without ids (e.g. from a nav link): fall back to whatever is in the tray.
   useEffect(() => {
@@ -35,6 +50,12 @@ function ComparePage() {
       navigate({ search: { ids: compare.slugs.join(",") }, replace: true });
     }
   }, [ids, compare.slugs, navigate]);
+
+  // A shared compare link becomes the tray, so the cards elsewhere agree with this page.
+  useEffect(() => {
+    if (idsKey && idsKey !== compare.slugs.join(",")) compare.replace(idsKey.split(","));
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only when the URL changes
+  }, [idsKey]);
 
   const setSlugs = (next: string[]) => {
     const clean = [...new Set(next.filter(Boolean))].slice(0, MAX_COMPARE);
@@ -47,6 +68,9 @@ function ComparePage() {
   while (slots.length < MAX_COMPARE) slots.push(undefined);
 
   const all = listVehicles();
+  const variantOf = (x: Vehicle): Variant =>
+    x.variants.find((v) => v.name === variantNames[x.slug]) ?? cheapestVariant(x);
+  const onRoadOf = (x: Vehicle) => (city ? onRoadFor(x, variantOf(x), city).total : undefined);
   const mixed = new Set(picked.map((x) => x.type)).size > 1;
 
   return (
@@ -62,6 +86,9 @@ function ComparePage() {
       />
       <PageBody>
         <Tile>
+          <div className="mb-4 flex flex-wrap items-center justify-end gap-2 text-xs text-foreground/60">
+            On-road prices for <CityPicker />
+          </div>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[640px] table-fixed text-sm">
               <colgroup>
@@ -128,30 +155,66 @@ function ComparePage() {
                 </tr>
               </thead>
               <tbody>
+                {picked.length > 0 && (
+                  <>
+                    <tr className="border-t border-border/60">
+                      <th className={rowLabelCls}>Variant</th>
+                      {slots.map((x, i) => (
+                        <td key={i} className="px-2 py-2.5 align-top">
+                          {x && (
+                            <select
+                              aria-label={`${x.name} variant`}
+                              value={variantOf(x).name}
+                              onChange={(ev) =>
+                                setVariantNames((m) => ({ ...m, [x.slug]: ev.target.value }))
+                              }
+                              className={selectCls}
+                            >
+                              {[...x.variants]
+                                .sort((a, b) => a.price - b.price)
+                                .map((v) => (
+                                  <option key={v.name} value={v.name}>
+                                    {v.name}
+                                  </option>
+                                ))}
+                            </select>
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                    <PriceRow label="Ex-showroom" slots={slots} value={(x) => variantOf(x).price} />
+                    <PriceRow
+                      label={city ? `On-road, ${city.name}` : "On-road"}
+                      slots={slots}
+                      value={onRoadOf}
+                      empty="Choose a city"
+                    />
+                  </>
+                )}
                 {picked.length > 0 &&
-                  specRows.map((r) => {
-                    const vals = slots.map((x) => (x ? r.value(x) : undefined));
-                    if (vals.every((v) => !v)) return null;
-                    const best = bestIndex(slots, r.rank, r.lowerIsBetter);
-                    return (
-                      <tr key={r.label} className="border-t border-border/60">
-                        <th className="py-2.5 pr-2 text-left text-xs font-semibold uppercase tracking-widest text-foreground/50">
-                          {r.label}
-                        </th>
-                        {vals.map((val, i) => (
-                          <td
-                            key={i}
-                            className={
-                              "px-2 py-2.5 align-top " +
-                              (i === best ? "font-bold text-primary" : "text-foreground/80")
-                            }
-                          >
-                            {slots[i] ? (val ?? "—") : ""}
-                          </td>
-                        ))}
-                      </tr>
-                    );
-                  })}
+                  specRows
+                    .filter((r) => r.label !== "Starting price")
+                    .map((r) => {
+                      const vals = slots.map((x) => (x ? r.value(x) : undefined));
+                      if (vals.every((v) => !v)) return null;
+                      const best = bestIndex(slots, r.rank, r.lowerIsBetter);
+                      return (
+                        <tr key={r.label} className="border-t border-border/60">
+                          <th className={rowLabelCls}>{r.label}</th>
+                          {vals.map((val, i) => (
+                            <td
+                              key={i}
+                              className={
+                                "px-2 py-2.5 align-top " +
+                                (i === best ? "font-bold text-primary" : "text-foreground/80")
+                              }
+                            >
+                              {slots[i] ? (val ?? "—") : ""}
+                            </td>
+                          ))}
+                        </tr>
+                      );
+                    })}
               </tbody>
             </table>
           </div>
@@ -172,6 +235,51 @@ function ComparePage() {
         </Tile>
       </PageBody>
     </SiteShell>
+  );
+}
+
+const rowLabelCls =
+  "py-2.5 pr-2 text-left text-xs font-semibold uppercase tracking-widest text-foreground/50";
+
+/** A price row where the lowest figure is highlighted. */
+function PriceRow({
+  label,
+  slots,
+  value,
+  empty = "—",
+}: {
+  label: string;
+  slots: (Vehicle | undefined)[];
+  value: (x: Vehicle) => number | undefined;
+  empty?: string;
+}) {
+  const best = bestIndex(slots, value, true);
+  return (
+    <tr className="border-t border-border/60">
+      <th className={rowLabelCls}>{label}</th>
+      {slots.map((x, i) => {
+        const n = x ? value(x) : undefined;
+        return (
+          <td
+            key={i}
+            className={
+              "px-2 py-2.5 align-top " +
+              (i === best ? "font-bold text-primary" : "text-foreground/80")
+            }
+          >
+            {x ? (
+              n === undefined ? (
+                <span className="text-foreground/40">{empty}</span>
+              ) : (
+                formatPrice(n)
+              )
+            ) : (
+              ""
+            )}
+          </td>
+        );
+      })}
+    </tr>
   );
 }
 
