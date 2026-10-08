@@ -67,10 +67,15 @@ export const sections = [
 export type SectionPath = (typeof sections)[number]["to"];
 
 /* ---------- shared bits ---------- */
+/** Checkered-flag square, the brand mark. */
+export const Checker = ({ className = "" }: { className?: string }) => (
+  <span aria-hidden className={`inline-block checker rounded-[2px] ${className}`} />
+);
+
 export const TileTitle = ({ children, to }: { children: React.ReactNode; to?: SectionPath }) => (
-  <div className="flex items-center gap-3 mb-4">
-    <span className="block h-5 w-1.5 bg-primary rounded-full" />
-    <h2 className="text-xs font-bold tracking-[0.2em] text-foreground/90 uppercase">
+  <div className="flex items-center gap-2.5 mb-4">
+    <Checker className="h-3 w-3 text-primary" />
+    <h2 className="font-display text-lg font-bold uppercase leading-none tracking-wide text-foreground">
       {to ? (
         <Link to={to} className="hover:text-primary transition-colors">
           {children}
@@ -91,8 +96,8 @@ export const Tile = ({
 }) => (
   <section
     className={
-      "relative rounded-3xl border border-border bg-white/[0.03] backdrop-blur-sm " +
-      "p-5 sm:p-6 shadow-[0_10px_40px_-20px_rgba(0,0,0,0.6)] " +
+      "relative rounded-xl border border-border bg-card " +
+      "p-5 sm:p-6 shadow-[inset_0_1px_0_0_oklch(1_0_0/0.04)] " +
       "flex flex-col overflow-hidden " +
       className
     }
@@ -102,15 +107,14 @@ export const Tile = ({
 );
 
 const btnBase =
-  "group inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm transition-all active:scale-[0.98]";
+  "group inline-flex items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-semibold transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
 const btnVariants = {
   primary:
-    "bg-primary font-semibold text-primary-foreground hover:brightness-110 hover:shadow-[0_8px_24px_-8px_oklch(0.628_0.236_25.5/0.7)]",
-  outline:
-    "border border-primary/60 font-semibold text-primary hover:bg-primary hover:text-primary-foreground",
+    "bg-primary text-primary-foreground hover:brightness-110 hover:shadow-[0_8px_24px_-10px_var(--color-primary)]",
+  outline: "border border-primary/60 text-primary hover:bg-primary hover:text-primary-foreground",
   accent:
-    "bg-accent font-bold text-accent-foreground hover:brightness-110 hover:shadow-[0_8px_24px_-8px_oklch(0.78_0.16_75/0.7)]",
+    "bg-accent text-accent-foreground hover:brightness-110 hover:shadow-[0_8px_24px_-10px_var(--color-accent)]",
 };
 
 type BtnVariant = keyof typeof btnVariants;
@@ -146,32 +150,42 @@ export const ArrowButton = ({
 );
 
 /* ---------- page chrome ---------- */
+export function Logo() {
+  return (
+    <Link to="/" className="flex items-center gap-2" aria-label="MOTOHUB home">
+      <Checker className="h-5 w-5 text-primary" />
+      <span className="font-display text-2xl font-extrabold uppercase leading-none tracking-wider">
+        Moto<span className="text-primary">hub</span>
+      </span>
+    </Link>
+  );
+}
+
 export function SiteHeader() {
   return (
-    <header className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-6 pb-4 flex items-center justify-between">
-      <Link to="/" className="flex items-center gap-2">
-        <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-primary-foreground">
-          <Icon.Bolt className="h-5 w-5" />
-        </span>
-        <span className="text-lg font-black tracking-[0.2em]">
-          MOTO<span className="text-primary">HUB</span>
-        </span>
-      </Link>
-      <nav className="hidden md:flex items-center gap-7 text-sm text-foreground/70">
-        {sections.map((s) => (
-          <Link
-            key={s.to}
-            to={s.to}
-            className="hover:text-foreground"
-            activeProps={{ className: "text-primary font-semibold" }}
-          >
-            {s.label}
-          </Link>
-        ))}
-      </nav>
-      <button className="rounded-full border border-border px-4 py-1.5 text-sm hover:bg-white/5">
-        Sign in
-      </button>
+    <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-6">
+        <Logo />
+        <nav className="hidden md:flex items-center gap-1 font-display text-[15px] font-semibold uppercase tracking-wider">
+          {sections.map((s) => (
+            <Link
+              key={s.to}
+              to={s.to}
+              className="relative rounded-md px-3 py-2 text-foreground/65 transition-colors hover:text-foreground"
+              activeProps={{
+                className:
+                  "!text-foreground after:absolute after:inset-x-3 after:-bottom-[13px] after:h-0.5 after:bg-primary",
+              }}
+            >
+              {s.label}
+            </Link>
+          ))}
+        </nav>
+        <button className="rounded-md border border-border px-4 py-1.5 text-sm font-semibold transition-colors hover:border-primary/60 hover:text-primary">
+          Sign in
+        </button>
+      </div>
+      <MobileNav />
     </header>
   );
 }
@@ -179,13 +193,13 @@ export function SiteHeader() {
 /** Scrollable section links for small screens, where the header nav is hidden. */
 function MobileNav() {
   return (
-    <nav className="md:hidden mx-auto max-w-7xl px-4 sm:px-6 pb-2 flex gap-2 overflow-x-auto text-xs">
+    <nav className="md:hidden mx-auto max-w-7xl px-4 sm:px-6 pb-2.5 flex gap-1.5 overflow-x-auto font-display text-sm font-semibold uppercase tracking-wider">
       {sections.map((s) => (
         <Link
           key={s.to}
           to={s.to}
-          className="shrink-0 rounded-full border border-border px-3 py-1.5 text-foreground/70"
-          activeProps={{ className: "border-primary text-primary" }}
+          className="shrink-0 rounded-md border border-border px-3 py-1 text-foreground/70"
+          activeProps={{ className: "!border-primary bg-primary !text-primary-foreground" }}
         >
           {s.label}
         </Link>
@@ -196,23 +210,46 @@ function MobileNav() {
 
 export function SiteFooter() {
   return (
-    <footer className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-10 text-xs text-foreground/40 flex items-center justify-between">
-      <span>© {new Date().getFullYear()} MOTOHUB</span>
-      <span className="tracking-widest">DRIVE · RIDE · REPEAT</span>
+    <footer className="mt-8 border-t border-border">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 grid gap-8 sm:grid-cols-[1.4fr_1fr]">
+        <div>
+          <Logo />
+          <p className="mt-3 max-w-sm text-sm text-muted-foreground">
+            Prices, specs, news and stories for people who love cars and bikes on Indian roads.
+          </p>
+        </div>
+        <nav className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-2 text-sm">
+          {sections.map((s) => (
+            <Link
+              key={s.to}
+              to={s.to}
+              className="text-muted-foreground transition-colors hover:text-primary"
+            >
+              {s.label}
+            </Link>
+          ))}
+        </nav>
+      </div>
+      <div className="rev-rule h-1" aria-hidden />
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+        <span>© {new Date().getFullYear()} MOTOHUB</span>
+        <span className="font-display text-sm font-semibold uppercase tracking-[0.25em]">
+          Drive · Ride · Repeat
+        </span>
+      </div>
     </footer>
   );
 }
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
   return (
-    <main className="min-h-screen bg-background text-foreground font-sans antialiased [font-family:Inter,ui-sans-serif,system-ui,sans-serif]">
-      {/* ambient glow */}
-      <div aria-hidden className="pointer-events-none fixed inset-0 -z-10">
-        <div className="absolute -top-40 -left-32 h-96 w-96 rounded-full bg-primary/20 blur-3xl" />
-        <div className="absolute top-1/2 -right-32 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
-      </div>
+    <main className="min-h-screen bg-background text-foreground font-sans antialiased">
+      {/* faint sodium-lamp wash at the top of the page */}
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-[420px] bg-[radial-gradient(ellipse_70%_60%_at_50%_-10%,color-mix(in_oklch,var(--color-primary)_14%,transparent),transparent)]"
+      />
       <SiteHeader />
-      <MobileNav />
       {children}
       <SiteFooter />
     </main>
@@ -230,20 +267,21 @@ export function PageHero({
   intro: string;
 }) {
   return (
-    <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-4 pb-8">
-      <Link to="/" className="text-xs text-foreground/50 hover:text-primary">
+    <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-6 pb-8">
+      <Link to="/" className="text-xs font-semibold text-muted-foreground hover:text-primary">
         ← Back to hub
       </Link>
-      <div className="mt-4 flex items-center gap-3">
-        <span className="block h-5 w-1.5 bg-primary rounded-full" />
-        <span className="text-xs font-bold tracking-[0.2em] text-foreground/90 uppercase">
+      <div className="mt-5 flex items-center gap-2.5">
+        <Checker className="h-3 w-3 text-primary" />
+        <span className="font-display text-sm font-bold uppercase tracking-[0.2em] text-primary">
           {eyebrow}
         </span>
       </div>
-      <h1 className="mt-3 text-3xl sm:text-5xl font-black leading-[1.02] tracking-tight">
+      <h1 className="mt-2 font-display text-4xl sm:text-6xl font-extrabold uppercase leading-[0.92] tracking-tight">
         {title}
       </h1>
-      <p className="mt-3 max-w-2xl text-sm sm:text-base text-foreground/60">{intro}</p>
+      <p className="mt-3 max-w-2xl text-sm sm:text-base text-muted-foreground">{intro}</p>
+      <div className="rev-rule mt-6 h-1 max-w-48 rounded-full" aria-hidden />
     </section>
   );
 }
