@@ -10,20 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as StoriesRouteImport } from './routes/stories'
-import { Route as PricesRouteImport } from './routes/prices'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as MerchRouteImport } from './routes/merch'
 import { Route as EventsRouteImport } from './routes/events'
+import { Route as CompareRouteImport } from './routes/compare'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PricesIndexRouteImport } from './routes/prices.index'
+import { Route as PricesSlugRouteImport } from './routes/prices.$slug'
 
 const StoriesRoute = StoriesRouteImport.update({
   id: '/stories',
   path: '/stories',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PricesRoute = PricesRouteImport.update({
-  id: '/prices',
-  path: '/prices',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NewsRoute = NewsRouteImport.update({
@@ -41,52 +38,100 @@ const EventsRoute = EventsRouteImport.update({
   path: '/events',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CompareRoute = CompareRouteImport.update({
+  id: '/compare',
+  path: '/compare',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PricesIndexRoute = PricesIndexRouteImport.update({
+  id: '/prices/',
+  path: '/prices/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricesSlugRoute = PricesSlugRouteImport.update({
+  id: '/prices/$slug',
+  path: '/prices/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/compare': typeof CompareRoute
   '/events': typeof EventsRoute
   '/merch': typeof MerchRoute
   '/news': typeof NewsRoute
-  '/prices': typeof PricesRoute
   '/stories': typeof StoriesRoute
+  '/prices/$slug': typeof PricesSlugRoute
+  '/prices/': typeof PricesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/compare': typeof CompareRoute
   '/events': typeof EventsRoute
   '/merch': typeof MerchRoute
   '/news': typeof NewsRoute
-  '/prices': typeof PricesRoute
   '/stories': typeof StoriesRoute
+  '/prices/$slug': typeof PricesSlugRoute
+  '/prices': typeof PricesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/compare': typeof CompareRoute
   '/events': typeof EventsRoute
   '/merch': typeof MerchRoute
   '/news': typeof NewsRoute
-  '/prices': typeof PricesRoute
   '/stories': typeof StoriesRoute
+  '/prices/$slug': typeof PricesSlugRoute
+  '/prices/': typeof PricesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/events' | '/merch' | '/news' | '/prices' | '/stories'
+  fullPaths:
+    | '/'
+    | '/compare'
+    | '/events'
+    | '/merch'
+    | '/news'
+    | '/stories'
+    | '/prices/$slug'
+    | '/prices/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/events' | '/merch' | '/news' | '/prices' | '/stories'
-  id: '__root__' | '/' | '/events' | '/merch' | '/news' | '/prices' | '/stories'
+  to:
+    | '/'
+    | '/compare'
+    | '/events'
+    | '/merch'
+    | '/news'
+    | '/stories'
+    | '/prices/$slug'
+    | '/prices'
+  id:
+    | '__root__'
+    | '/'
+    | '/compare'
+    | '/events'
+    | '/merch'
+    | '/news'
+    | '/stories'
+    | '/prices/$slug'
+    | '/prices/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CompareRoute: typeof CompareRoute
   EventsRoute: typeof EventsRoute
   MerchRoute: typeof MerchRoute
   NewsRoute: typeof NewsRoute
-  PricesRoute: typeof PricesRoute
   StoriesRoute: typeof StoriesRoute
+  PricesSlugRoute: typeof PricesSlugRoute
+  PricesIndexRoute: typeof PricesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -96,13 +141,6 @@ declare module '@tanstack/react-router' {
       path: '/stories'
       fullPath: '/stories'
       preLoaderRoute: typeof StoriesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/prices': {
-      id: '/prices'
-      path: '/prices'
-      fullPath: '/prices'
-      preLoaderRoute: typeof PricesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/news': {
@@ -126,6 +164,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EventsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/compare': {
+      id: '/compare'
+      path: '/compare'
+      fullPath: '/compare'
+      preLoaderRoute: typeof CompareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -133,16 +178,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/prices/': {
+      id: '/prices/'
+      path: '/prices'
+      fullPath: '/prices/'
+      preLoaderRoute: typeof PricesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/prices/$slug': {
+      id: '/prices/$slug'
+      path: '/prices/$slug'
+      fullPath: '/prices/$slug'
+      preLoaderRoute: typeof PricesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CompareRoute: CompareRoute,
   EventsRoute: EventsRoute,
   MerchRoute: MerchRoute,
   NewsRoute: NewsRoute,
-  PricesRoute: PricesRoute,
   StoriesRoute: StoriesRoute,
+  PricesSlugRoute: PricesSlugRoute,
+  PricesIndexRoute: PricesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
