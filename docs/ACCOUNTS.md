@@ -1,7 +1,8 @@
 # Accounts and Garage Stories
 
 Sign-in is Google only. The first Google sign-in creates the account, then the user picks a
-username on `/account`. Signed-in users can post stories with up to 4 photos and upvote.
+username and their city on `/account` (city drives on-road prices; it is kept in sync with
+the catalog's city picker by `src/components/city-sync.tsx`). Signed-in users can post stories with up to 4 photos and upvote.
 Reading stays public.
 
 | Piece | Where |

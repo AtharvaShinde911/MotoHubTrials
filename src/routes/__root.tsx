@@ -1,5 +1,6 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 
+import { CitySync } from "@/components/city-sync";
 import { fetchCurrentUser } from "@/lib/account";
 
 import appCss from "../styles.css?url";
@@ -76,5 +77,10 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
-  return <Outlet />;
+  return (
+    <>
+      <CitySync />
+      <Outlet />
+    </>
+  );
 }

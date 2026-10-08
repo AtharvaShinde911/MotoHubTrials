@@ -13,6 +13,8 @@ export interface SessionUser {
   avatarUrl: string | null;
   /** Public username; null until the account is set up on /account. */
   handle: string | null;
+  /** City id from src/lib/location.ts, for on-road prices. */
+  city: string | null;
 }
 
 interface UserRow {
@@ -21,6 +23,7 @@ interface UserRow {
   name: string | null;
   avatar_url: string | null;
   handle: string | null;
+  city: string | null;
 }
 
 const toSessionUser = (r: UserRow): SessionUser => ({
@@ -29,6 +32,7 @@ const toSessionUser = (r: UserRow): SessionUser => ({
   name: r.name,
   avatarUrl: r.avatar_url,
   handle: r.handle,
+  city: r.city,
 });
 
 /* ---------- cookies ---------- */
@@ -99,7 +103,7 @@ export async function upsertGoogleUser(p: GoogleProfile): Promise<SessionUser> {
   const { DB } = await getEnv();
   const email = p.email.toLowerCase();
   const existing = await DB.prepare(
-    "SELECT id, email, name, avatar_url, handle FROM users WHERE google_sub = ?",
+    "SELECT id, email, name, avatar_url, handle, city FROM users WHERE google_sub = ?",
   )
     .bind(p.sub)
     .first<UserRow>();
@@ -120,7 +124,14 @@ export async function upsertGoogleUser(p: GoogleProfile): Promise<SessionUser> {
   )
     .bind(id, p.sub, email, p.name ?? null, p.picture ?? null, Date.now())
     .run();
-  return { id, email, name: p.name ?? null, avatarUrl: p.picture ?? null, handle: null };
+  return {
+    id,
+    email,
+    name: p.name ?? null,
+    avatarUrl: p.picture ?? null,
+    handle: null,
+    city: null,
+  };
 }
 
 /* ---------- sessions ---------- */
@@ -140,7 +151,7 @@ export async function getSessionUser(request: Request): Promise<SessionUser | nu
   if (!token) return null;
   const { DB } = await getEnv();
   const row = await DB.prepare(
-    `SELECT u.id, u.email, u.name, u.avatar_url, u.handle
+    `SELECT u.id, u.email, u.name, u.avatar_url, u.handle, u.city
        FROM sessions s JOIN users u ON u.id = s.user_id
       WHERE s.id = ? AND s.expires_at > ?`,
   )

@@ -11,6 +11,7 @@ import {
   Tile,
 } from "@/components/site";
 import { handleRules, saveProfile } from "@/lib/account";
+import { cities, nearestCity, useCity } from "@/lib/location";
 import { listMyStories } from "@/lib/stories";
 
 export const Route = createFileRoute("/account")({
@@ -38,7 +39,7 @@ function AccountPage() {
         title={
           isNew ? (
             <>
-              One last step: pick your <span className="text-primary">username</span>.
+              One last step: your <span className="text-primary">username</span> and city.
             </>
           ) : (
             <>
@@ -48,7 +49,7 @@ function AccountPage() {
         }
         intro={
           isNew
-            ? "Your username shows on every story you post. You can change it later."
+            ? "Your username shows on every story you post. Your city sets the on-road prices you see. You can change both later."
             : `Signed in with Google as ${user.email}.`
         }
       />
@@ -108,6 +109,9 @@ function ProfileForm() {
   const router = useRouter();
   const [handle, setHandle] = useState(user.handle ?? suggestHandle(user.name ?? user.email));
   const [name, setName] = useState(user.name ?? "");
+  const local = useCity();
+  const [city, setCityField] = useState(user.city ?? local.city?.id ?? "");
+  const [locating, setLocating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -119,16 +123,34 @@ function ProfileForm() {
     setError(null);
     setSaved(false);
     try {
-      const res = await saveProfile({ data: { handle, name } });
+      const res = await saveProfile({ data: { handle, name, city } });
       if (!res.ok) return setError(res.error);
+      local.setCity(city);
       await router.invalidate();
       if (isNew) await router.navigate({ href: next ?? "/stories" });
       else setSaved(true);
     } catch {
-      setError(`Check your username: ${handleRules}`);
+      setError(city ? `Check your username: ${handleRules}` : "Pick your city.");
     } finally {
       setSaving(false);
     }
+  }
+
+  function locate() {
+    if (!("geolocation" in navigator)) return setError("Your browser can't share your location.");
+    setLocating(true);
+    setError(null);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setLocating(false);
+        setCityField(nearestCity(pos.coords.latitude, pos.coords.longitude).id);
+      },
+      () => {
+        setLocating(false);
+        setError("Couldn't get your location. Pick your city from the list.");
+      },
+      { timeout: 10000, maximumAge: 600000 },
+    );
   }
 
   return (
@@ -161,6 +183,37 @@ function ProfileForm() {
           maxLength={50}
           required
         />
+      </label>
+      <label className="flex flex-col gap-1.5 text-sm">
+        City
+        <div className="flex gap-2">
+          <select
+            className={inputCls + " [&>option]:bg-background"}
+            value={city}
+            onChange={(e) => setCityField(e.target.value)}
+            required
+          >
+            <option value="" disabled>
+              Choose your city
+            </option>
+            {cities.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+          <button
+            type="button"
+            onClick={locate}
+            disabled={locating}
+            className="shrink-0 rounded-xl border border-border px-3 text-xs font-semibold hover:border-primary disabled:opacity-60"
+          >
+            {locating ? "Locating…" : "Use my location"}
+          </button>
+        </div>
+        <span className="text-[11px] text-foreground/40">
+          Used for on-road prices (road tax, registration, insurance).
+        </span>
       </label>
       {error && <p className="text-sm text-primary">{error}</p>}
       {saved && <p className="text-sm text-foreground/60">Saved.</p>}
