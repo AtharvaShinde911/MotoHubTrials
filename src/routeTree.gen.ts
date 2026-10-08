@@ -9,8 +9,38 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as StoriesRouteImport } from './routes/stories'
+import { Route as PricesRouteImport } from './routes/prices'
+import { Route as NewsRouteImport } from './routes/news'
+import { Route as MerchRouteImport } from './routes/merch'
+import { Route as EventsRouteImport } from './routes/events'
 import { Route as IndexRouteImport } from './routes/index'
 
+const StoriesRoute = StoriesRouteImport.update({
+  id: '/stories',
+  path: '/stories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricesRoute = PricesRouteImport.update({
+  id: '/prices',
+  path: '/prices',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewsRoute = NewsRouteImport.update({
+  id: '/news',
+  path: '/news',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MerchRoute = MerchRouteImport.update({
+  id: '/merch',
+  path: '/merch',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventsRoute = EventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +49,83 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/events': typeof EventsRoute
+  '/merch': typeof MerchRoute
+  '/news': typeof NewsRoute
+  '/prices': typeof PricesRoute
+  '/stories': typeof StoriesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/events': typeof EventsRoute
+  '/merch': typeof MerchRoute
+  '/news': typeof NewsRoute
+  '/prices': typeof PricesRoute
+  '/stories': typeof StoriesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/events': typeof EventsRoute
+  '/merch': typeof MerchRoute
+  '/news': typeof NewsRoute
+  '/prices': typeof PricesRoute
+  '/stories': typeof StoriesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/events' | '/merch' | '/news' | '/prices' | '/stories'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/events' | '/merch' | '/news' | '/prices' | '/stories'
+  id: '__root__' | '/' | '/events' | '/merch' | '/news' | '/prices' | '/stories'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EventsRoute: typeof EventsRoute
+  MerchRoute: typeof MerchRoute
+  NewsRoute: typeof NewsRoute
+  PricesRoute: typeof PricesRoute
+  StoriesRoute: typeof StoriesRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/stories': {
+      id: '/stories'
+      path: '/stories'
+      fullPath: '/stories'
+      preLoaderRoute: typeof StoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/prices': {
+      id: '/prices'
+      path: '/prices'
+      fullPath: '/prices'
+      preLoaderRoute: typeof PricesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/news': {
+      id: '/news'
+      path: '/news'
+      fullPath: '/news'
+      preLoaderRoute: typeof NewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/merch': {
+      id: '/merch'
+      path: '/merch'
+      fullPath: '/merch'
+      preLoaderRoute: typeof MerchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events': {
+      id: '/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof EventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +138,11 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EventsRoute: EventsRoute,
+  MerchRoute: MerchRoute,
+  NewsRoute: NewsRoute,
+  PricesRoute: PricesRoute,
+  StoriesRoute: StoriesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
