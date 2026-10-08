@@ -2,8 +2,16 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Car, Check, GitCompare, Motorbike, Plus, Scooter, X, Zap } from "lucide-react";
 
-import { formatPriceRange, getVehicle, type Vehicle } from "@/lib/catalog";
+import {
+  cheapestVariant,
+  formatPrice,
+  formatPriceRange,
+  getVehicle,
+  type Vehicle,
+} from "@/lib/catalog";
 import { MAX_COMPARE, useCompare } from "@/lib/compare";
+import { useCity } from "@/lib/location";
+import { onRoadFor } from "@/lib/onroad";
 
 const grads = [
   "from-rose-500/40 via-orange-500/25 to-amber-400/10",
@@ -78,6 +86,8 @@ export function CompareToggle({ slug, compact = false }: { slug: string; compact
 
 export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
   const s = vehicle.specs;
+  const { city } = useCity();
+  const onRoad = city ? onRoadFor(vehicle, cheapestVariant(vehicle), city).total : undefined;
   return (
     <article className="group flex flex-col rounded-3xl border border-border bg-white/[0.03] p-3 transition-colors hover:border-primary/40">
       <Link to="/prices/$slug" params={{ slug: vehicle.slug }} className="block">
@@ -106,7 +116,17 @@ export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
         </div>
       </Link>
       <div className="mt-auto flex items-center justify-between px-1 pt-3">
-        <span className="text-[11px] text-foreground/40">Ex-showroom</span>
+        <span className="text-[11px] leading-tight text-foreground/50">
+          {onRoad ? (
+            <>
+              On-road in {city!.name}
+              <br />
+              <span className="font-semibold text-foreground/80">from {formatPrice(onRoad)}</span>
+            </>
+          ) : (
+            "Ex-showroom"
+          )}
+        </span>
         <CompareToggle slug={vehicle.slug} compact />
       </div>
     </article>

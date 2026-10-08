@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
 import { Chip, CompareTray, VehicleCard } from "@/components/catalog";
+import { CityPicker } from "@/components/location";
 import { Icon, PageBody, PageHero, SiteShell, Tile } from "@/components/site";
 import {
   budgets,
@@ -105,6 +106,8 @@ function PricesPage() {
           </label>
 
           <div className="mt-4 flex flex-wrap items-center gap-2">
+            <CityPicker />
+            <span className="mx-1 h-5 w-px bg-border" aria-hidden />
             <Chip active={!type} onClick={() => setType(undefined)}>
               All
             </Chip>

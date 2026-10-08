@@ -1,14 +1,18 @@
+import { useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ShieldCheck } from "lucide-react";
 
 import { CompareToggle, CompareTray, VehicleArt, VehicleCard } from "@/components/catalog";
+import { PriceBox } from "@/components/price";
 import { PageBody, SiteShell, Tile, TileTitle } from "@/components/site";
 import {
+  cheapestVariant,
   formatPrice,
   formatPriceRange,
   getVehicle,
   similarVehicles,
   specRows,
+  type Variant,
 } from "@/lib/catalog";
 
 export const Route = createFileRoute("/prices/$slug")({
@@ -35,6 +39,10 @@ export const Route = createFileRoute("/prices/$slug")({
 
 function VehiclePage() {
   const { vehicle: x } = Route.useLoaderData();
+  const [picked, setPicked] = useState<string>();
+  // Falls back to the base variant, including after navigating to another model.
+  const variant = x.variants.find((v) => v.name === picked) ?? cheapestVariant(x);
+  const setVariant = (v: Variant) => setPicked(v.name);
   const s = x.specs;
   const keySpecs = [
     s.batteryKwh
@@ -96,10 +104,7 @@ function VehiclePage() {
               {x.model}
             </h1>
             <p className="mt-3 text-sm sm:text-base text-foreground/60">{x.summary}</p>
-            <p className="mt-5 text-2xl sm:text-3xl font-black text-primary">
-              {formatPriceRange(x)}
-            </p>
-            <p className="text-[11px] text-foreground/40">Ex-showroom, Delhi (indicative)</p>
+            <PriceBox vehicle={x} variant={variant} onVariant={setVariant} />
             <div className="mt-5 flex flex-wrap items-center gap-3">
               <CompareToggle slug={x.slug} />
               {x.safety && (
@@ -147,7 +152,15 @@ function VehiclePage() {
                   {[...x.variants]
                     .sort((a, b) => a.price - b.price)
                     .map((vr) => (
-                      <tr key={vr.name} className="border-t border-border/60">
+                      <tr
+                        key={vr.name}
+                        onClick={() => setVariant(vr)}
+                        aria-selected={vr.name === variant.name}
+                        className={
+                          "cursor-pointer border-t border-border/60 hover:bg-white/[0.03] " +
+                          (vr.name === variant.name ? "bg-primary/10" : "")
+                        }
+                      >
                         <td className="py-3 font-semibold">{vr.name}</td>
                         <td className="py-3 text-foreground/70">{vr.fuel}</td>
                         <td className="py-3 text-foreground/70">{vr.transmission}</td>
