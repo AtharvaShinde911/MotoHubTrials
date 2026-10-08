@@ -71,7 +71,23 @@ function VehiclePage() {
         </nav>
 
         <div className="mt-5 grid gap-6 lg:grid-cols-[1.1fr_1fr] lg:items-center">
-          <VehicleArt vehicle={x} className="aspect-[16/10] w-full" />
+          <figure>
+            <VehicleArt vehicle={x} className="aspect-[16/10] w-full" />
+            {x.photo && (
+              <figcaption className="mt-1.5 text-[11px] text-foreground/40">
+                Photo:{" "}
+                <a
+                  href={x.photo.sourceUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:text-primary"
+                >
+                  {x.photo.credit}
+                </a>
+                , {x.photo.license}
+              </figcaption>
+            )}
+          </figure>
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-foreground/60">
               {x.brand} · {x.body}

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Car, Check, GitCompare, Motorbike, Plus, Scooter, X, Zap } from "lucide-react";
 
@@ -16,15 +17,33 @@ const grads = [
 const gradFor = (key: string) =>
   grads[[...key].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7) % grads.length];
 
-/** Placeholder artwork until real photos are licensed: a brand-tinted gradient with a body-type icon. */
+/** The model's photo, or a brand-tinted gradient with a body-type icon when there is none (or it fails to load). */
 export function VehicleArt({ vehicle, className = "" }: { vehicle: Vehicle; className?: string }) {
+  const [broken, setBroken] = useState(false);
+  const photo = broken ? undefined : vehicle.photo;
   const Glyph = vehicle.type === "car" ? Car : /scooter/i.test(vehicle.body) ? Scooter : Motorbike;
   return (
     <div
       className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${gradFor(vehicle.brand)} ${className}`}
     >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.22),transparent_60%)]" />
-      <Glyph className="absolute inset-0 m-auto h-1/2 w-1/2 text-white/80" strokeWidth={1.25} />
+      {photo ? (
+        <img
+          src={photo.src}
+          alt={vehicle.name}
+          loading="lazy"
+          onError={() => setBroken(true)}
+          // An image that failed before hydration never fires onError, so check on mount too.
+          ref={(el) => {
+            if (el?.complete && el.naturalWidth === 0) setBroken(true);
+          }}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      ) : (
+        <>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.22),transparent_60%)]" />
+          <Glyph className="absolute inset-0 m-auto h-1/2 w-1/2 text-white/80" strokeWidth={1.25} />
+        </>
+      )}
       {vehicle.fuels.includes("Electric") && (
         <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-md bg-background/70 px-1.5 py-0.5 text-[10px] font-bold tracking-wider">
           <Zap className="h-3 w-3 text-accent" /> EV

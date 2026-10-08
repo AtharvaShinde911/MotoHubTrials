@@ -3,15 +3,18 @@
  * so the seeded data in src/data/vehicles.ts can later be replaced by an API
  * or database without touching the UI.
  */
+import { vehiclePhotos, type VehiclePhoto } from "@/data/vehicle-photos";
 import { vehicleSeed, type Fuel, type VehicleSeed, type VehicleType } from "@/data/vehicles";
 
 export type { Fuel, Specs, Variant, VehicleType } from "@/data/vehicles";
+export type { VehiclePhoto } from "@/data/vehicle-photos";
 
 export type Vehicle = VehicleSeed & {
   name: string;
   priceMin: number;
   priceMax: number;
   fuels: Fuel[];
+  photo?: VehiclePhoto;
 };
 
 const uniq = <T>(xs: T[]) => [...new Set(xs)];
@@ -24,6 +27,7 @@ const vehicles: Vehicle[] = vehicleSeed.map((s) => {
     priceMin: Math.min(...prices),
     priceMax: Math.max(...prices),
     fuels: uniq(s.variants.map((x) => x.fuel)),
+    photo: vehiclePhotos[s.slug],
   };
 });
 
