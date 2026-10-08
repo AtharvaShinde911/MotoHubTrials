@@ -47,17 +47,6 @@ export const news = [
 
 export const brands = ["Tata", "Hero", "Royal Enfield", "Hyundai"];
 
-export const vehicles = [
-  { brand: "Tata", model: "Nexon", type: "Car", price: "₹8.0 – 15.8 lakh" },
-  { brand: "Tata", model: "Harrier EV", type: "Car", price: "₹21.5 – 30.2 lakh" },
-  { brand: "Hyundai", model: "Creta", type: "Car", price: "₹11.0 – 20.3 lakh" },
-  { brand: "Hyundai", model: "i20", type: "Car", price: "₹7.0 – 11.2 lakh" },
-  { brand: "Hero", model: "Splendor Plus", type: "Bike", price: "₹75,000 – 80,000" },
-  { brand: "Hero", model: "Xtreme 250R", type: "Bike", price: "₹1.80 lakh" },
-  { brand: "Royal Enfield", model: "Classic 350", type: "Bike", price: "₹1.93 – 2.30 lakh" },
-  { brand: "Royal Enfield", model: "Himalayan 450", type: "Bike", price: "₹2.85 – 2.98 lakh" },
-];
-
 export const stories = [
   {
     user: "RaviK",
